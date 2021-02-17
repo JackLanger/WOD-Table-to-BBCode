@@ -52,6 +52,7 @@
     const columnsLable = document.createElement("lable");
     const createTableButton = document.createElement("BUTTON");
     const convertButton = document.createElement("BUTTON");
+    const deleteTableButton = document.createElement("BUTTON");
     const table = document.createElement("table");
 
     tableContainer.style.display = "none";
@@ -63,7 +64,10 @@
     rows.innerHTML = "add Row";
     columns.innerHTML = "add Column";
     createTableButton.innerHTML = "Erstellen";
+    deleteTableButton.innerHTML = "reset";
     createTableButton.className = "button clickable";
+    deleteTableButton.className = "button clickable";
+    deleteTableButton.style.marginLeft = "0.5em";
     convertButton.innerHTML = "Convert";
     convertButton.className = "button clickable"
     rows.id = "rows";
@@ -74,6 +78,7 @@
     columns.style.textAlign = "center";
     columns.style.marginRight = "1em";
     columns.style.width = "1.5em";
+    table.id = "converter-table";
 
     var tableElements = [
       rowsLable,
@@ -81,6 +86,7 @@
       columnsLable,
       columns,
       createTableButton,
+      deleteTableButton,
       table,
       convertButton
     ];
@@ -144,6 +150,15 @@
         }
       }
     });
+
+
+
+    deleteTableButton.addEventListener('click',e=>{
+      e.preventDefault();
+      Array.from(table.childNodes[0].children).forEach(child =>{
+          table.childNodes[0].remove(child);
+      });
+    })
   }
 
   function addTextbox(name, parent) {
