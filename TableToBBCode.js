@@ -13,7 +13,7 @@
 
   const empty = document.createElement("BR");
   var isActive = false;
-  var _Rows,_Columns;
+  var _Rows, _Columns;
 
   // Your code here...
   var linkList = document.querySelector(".boardcon1.right");
@@ -69,7 +69,7 @@
     deleteTableButton.className = "button clickable";
     deleteTableButton.style.marginLeft = "0.5em";
     convertButton.innerHTML = "Convert";
-    convertButton.className = "button clickable"
+    convertButton.className = "button clickable";
     rows.id = "rows";
     columns.id = "columns";
     rows.style.width = "1.5em";
@@ -79,6 +79,11 @@
     columns.style.marginRight = "1em";
     columns.style.width = "1.5em";
     table.id = "converter-table";
+    table.style.minHeight = "1em";
+    //table.style.border = "solid 2px #777";
+    table.style.width = "auto";
+    table.style.padding = "0.5em";
+    table.style.margin = ".5em";
 
     var tableElements = [
       rowsLable,
@@ -88,7 +93,8 @@
       createTableButton,
       deleteTableButton,
       table,
-      convertButton
+      convertButton,
+      document.createElement("HR"),
     ];
 
     tableContainer.id = "table-container";
@@ -99,33 +105,30 @@
       tableContainer.appendChild(elem);
     });
 
-    convertButton.addEventListener('click',e=>{
-        e.preventDefault();
-        var tablebody = "[table border=2]\n";
+    convertButton.addEventListener("click", (e) => {
+      e.preventDefault();
+      var tablebody = "[table border=2]\n";
 
-
-        for(let r = 0;r<_Rows;r++){
-            tablebody += "[tr]";
-            for(let c = 0; c<_Columns;c++){
-
-                let selector = '#tb'+r+''+c;
-                let inputValue = document.querySelector(selector).value
-                tablebody += `[td]${inputValue}[/td]`;
-            }
-            tablebody += "[/tr]\n";
+      for (let r = 0; r < _Rows; r++) {
+        tablebody += "[tr]";
+        for (let c = 0; c < _Columns; c++) {
+          let selector = "#tb" + r + "" + c;
+          let inputValue = document.querySelector(selector).value;
+          tablebody += `[td]${inputValue}[/td]`;
         }
+        tablebody += "[/tr]\n";
+      }
 
-        tablebody += "[/table]";
+      tablebody += "[/table]";
 
-        console.log(tablebody);
-        if(!board.value ==""){
-            board.value+= "\n\n";
-            board.value+= tablebody+"\n\n";
-        }else {
-            board.value+= tablebody;
-        }
-
-    })
+      console.log(tablebody);
+      if (!board.value == "") {
+        board.value += "\n\n";
+        board.value += tablebody + "\n\n";
+      } else {
+        board.value += tablebody;
+      }
+    });
     createTableButton.addEventListener("click", (e) => {
       e.preventDefault();
       var rowCount, colCount;
@@ -143,27 +146,25 @@
       columns.value = 0;
 
       for (let r = 0; r < rowCount; r++) {
-          let tableRow = table.insertRow();
+        let tableRow = table.insertRow();
         for (let c = 0; c < colCount; c++) {
-            let column = tableRow.appendChild(document.createElement('TD'));
-            addTextbox(r+''+c,column);
+          let column = tableRow.appendChild(document.createElement("TD"));
+          addTextbox(r + "" + c, column);
         }
       }
     });
 
-
-
-    deleteTableButton.addEventListener('click',e=>{
+    deleteTableButton.addEventListener("click", (e) => {
       e.preventDefault();
-      Array.from(table.childNodes[0].children).forEach(child =>{
-          table.childNodes[0].remove(child);
+      Array.from(table.childNodes[0].children).forEach((child) => {
+        table.childNodes[0].remove(child);
       });
-    })
+    });
   }
 
   function addTextbox(name, parent) {
     var tb = document.createElement("input");
-    tb.id = "tb"+name;
+    tb.id = "tb" + name;
     parent.appendChild(tb);
   }
 })();
