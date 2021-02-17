@@ -15,52 +15,167 @@
   var isActive = false;
   var _Rows, _Columns;
 
-  class tableMember{
+  class optionsBuilder {
+    bold;
+    underlined;
+    header;
+    isExpanded;
+    parent;
+    div;
+    id;
+
+    constructor(parent, id) {
+      this.parent = parent;
+      this.id = id;
+      
+      this.setup();
+      
+      this.createBuilderVisuals(id);
+
+      this.div.onmouseover = () => {
+        this.expandOptionsMenu();
+      };
+      this.div.onmouseout = () => {
+        this.shrinkOptionsMenu();
+      };
+      
+    }
+
+    createBuilderVisuals(id){
+      //#region container
+      this.div = document.createElement("DIV");
+      this.parent.appendChild(this.div);
+      this.div.style.color = "#ffcf00";
+      this.div.style.height = ".5em";
+      this.div.style.width = ".5em";
+      this.div.style.background = "#888";
+      this.div.style.border = "solid 2px";
+      this.div.style.position = "absolute";
+      // this.div.style.top = "-1.5em";
+      // this.div.style.left = "10rem";
+      this.div.style.zIndex = 3;
+      this.div.id = id;
+      this.div.style.cursor = "pointer";
+      this.div.style.overflow = "hidden";
+      //#endregion
+      let boldCheckBox = document.createElement("input");
+      let underlineCheckBox = document.createElement("input");
+      let headerCheckBox = document.createElement("input");
+      
+      let lableBold = document.createElement("p");
+      let lableUnderline = document.createElement("p");
+      let lableHead = document.createElement("p");
+
+      lableBold.innerText = "b";
+      lableUnderline.innerText = "u";
+      lableHead.innerText = "h";
+      
+      boldCheckBox.setAttribute("type", "checkbox");
+      boldCheckBox.id = `${id}-bold`;
+
+      underlineCheckBox.setAttribute("type", "checkbox");
+      underlineCheckBox.id = `${id}-underline`;
+
+      headerCheckBox.setAttribute("type", "checkbox");
+      headerCheckBox.id = `${id}-header`;
+      let container = document.createElement('DIV');
+      this.div.appendChild(container);
+      container.appendChild(lableBold);
+      lableBold.appendChild(boldCheckBox);
+      container.appendChild(lableUnderline);
+      lableUnderline.appendChild(underlineCheckBox);
+      container.appendChild(lableHead);
+      lableHead.appendChild(headerCheckBox);
+      container.style.margin = "auto";
+    }
+
+
+    expandOptionsMenu(){    
+      this.isExpanded = true;
+      this.div.style.width = "auto";
+      this.div.style.height = "auto";
+      this.div.background = "#aaa";
+      this.div.border = "solid 1px";
+      this.div.style.zIndex = 4;
+    }
+
+    shrinkOptionsMenu(){
+      this.div.style.width = "0.5em";
+      this.div.style.height = "0.5em";
+      this.div.style.zIndex = 3;
+      this.update();
+    }
+
+    update(){
+      this.bold = document.querySelector(`#${this.id}-bold`).checked;
+      this.underlined = document.querySelector(`#${this.id}-underline`).checked;
+      this.header = document.querySelector(`#${this.id}-header`).checked;
+    }
+    setup() {
+      this.isExpanded = false;
+      console.log(this.div);
+      this.bold = false;
+      this.underlined = false;
+      this.header = false;
+    }
+  }
+
+  class tableMember {
     id;
     value;
     isBold;
     isUnderlined;
     isHeader;
     parent;
+    row;
+    column;
+    optionsBuilder;
 
-    constructor(id,parent){
-      this.id = id;
+    constructor(row, col, parent) {
+      this.id = `tb${row}${col}`;
       this.parent = parent;
+      this.row = row;
+      this.column = col;
 
-      addTextbox(id,parent);
+      addTextbox(this.id, parent, `op${row}${col}`);
+      this.optionsBuilder = new optionsBuilder(parent,"op"+this.id);
     }
 
-    update(value, bold,underlined,header){
-      this.value = value;
-      this.isBold = bold;
-      this.isUnderlined =underlined;
-      this.isHeader = header;
+    update(bold, underlined, header) {
+      this.value = document.querySelector(`#${this.id}`).value;
+      this.isBold = this.optionsBuilder.bold;
+      this.isUnderlined = this.optionsBuilder.underlined;
+      this.isHeader = this.optionsBuilder.header;
     }
 
-    toString(){
+    toString() {
       let output = this.value;
-      if(this.isHeader){
-        output = "[b][u]"+this.value+"[/u][/b]";
-      }else{
-        if(this.isBold){
-          output = "[b]"+this.value+"[/b]";
+      if (this.isHeader) {
+        output = "[size=14][b][u]" + this.value + "[/u][/b][/size]";
+      } else {
+        if (this.isBold) {
+          output = "[b]" + this.value + "[/b]";
         }
-        if(this.isUnderlined){
-          output = "[u]"+this.value+"[/u]";
+        if (this.isUnderlined) {
+          output = "[u]" + this.value + "[/u]";
         }
       }
-      return output
+      return output;
     }
   }
-
+  var tableMembers = [];
   var linkList = document.querySelector(".boardcon1.right");
   var tableCreatorLink = document.createElement("A");
+  
   linkList.appendChild(empty);
   linkList.appendChild(tableCreatorLink);
+
   tableCreatorLink.style.marginRight = "8px";
   tableCreatorLink.innerText = "Tabelle";
   tableCreatorLink.style.color = "#FFCF00";
   tableCreatorLink.style.cursor = "pointer";
+
+  //events
   tableCreatorLink.onmouseover = () => {
     tableCreatorLink.style.color = "#fff";
   };
@@ -117,7 +232,6 @@
     columns.style.width = "1.5em";
     table.id = "converter-table";
     table.style.minHeight = "1em";
-    //table.style.border = "solid 2px #777";
     table.style.width = "auto";
     table.style.padding = ".5em";
     table.style.margin = ".5em";
@@ -145,13 +259,15 @@
     convertButton.addEventListener("click", (e) => {
       e.preventDefault();
       var tablebody = "[table border=2]\n";
-
+      let index = 0;
       for (let r = 0; r < _Rows; r++) {
         tablebody += "[tr]";
+        //loop through table members and create the output
         for (let c = 0; c < _Columns; c++) {
-          let selector = "#tb" + r + "" + c;
-          let inputValue = document.querySelector(selector).value;
-          tablebody += `[td]${inputValue}[/td]`;
+          console.log(tableMembers[index].optionsBuilder);
+          tableMembers[index].update(false, false, false);
+          tablebody += `[td]${tableMembers[index].toString()}[/td]`;
+          index++;
         }
         tablebody += "[/tr]\n";
       }
@@ -166,6 +282,7 @@
         board.value += tablebody;
       }
     });
+
     createTableButton.addEventListener("click", (e) => {
       e.preventDefault();
       var rowCount, colCount;
@@ -185,8 +302,12 @@
       for (let r = 0; r < rowCount; r++) {
         let tableRow = table.insertRow();
         for (let c = 0; c < colCount; c++) {
-          let column = tableRow.appendChild(document.createElement("TD"));
-          new tableMember(`tb${r}${c}`, column);
+          let td = document.createElement("TD");
+          let column = tableRow.appendChild(td);
+
+          var member = new tableMember(r, c, column);
+          tableMembers.push(member);
+          member.update();
         }
       }
     });
@@ -196,12 +317,16 @@
       Array.from(table.childNodes[0].children).forEach((child) => {
         table.childNodes[0].remove(child);
       });
+      tableMembers = [];
     });
   }
 
   function addTextbox(name, parent) {
     var tb = document.createElement("input");
-    tb.id = id;
-    parent.appendChild(tb);
+    let div = document.createElement("DIV");
+    tb.id = name;
+    parent.appendChild(div);
+    div.appendChild(tb);
   }
+
 })();
