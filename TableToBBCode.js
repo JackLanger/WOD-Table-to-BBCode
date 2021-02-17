@@ -15,7 +15,44 @@
   var isActive = false;
   var _Rows, _Columns;
 
-  // Your code here...
+  class tableMember{
+    id;
+    value;
+    isBold;
+    isUnderlined;
+    isHeader;
+    parent;
+
+    constructor(id,parent){
+      this.id = id;
+      this.parent = parent;
+
+      addTextbox(id,parent);
+    }
+
+    update(value, bold,underlined,header){
+      this.value = value;
+      this.isBold = bold;
+      this.isUnderlined =underlined;
+      this.isHeader = header;
+    }
+
+    toString(){
+      let output = this.value;
+      if(this.isHeader){
+        output = "[b][u]"+this.value+"[/u][/b]";
+      }else{
+        if(this.isBold){
+          output = "[b]"+this.value+"[/b]";
+        }
+        if(this.isUnderlined){
+          output = "[u]"+this.value+"[/u]";
+        }
+      }
+      return output
+    }
+  }
+
   var linkList = document.querySelector(".boardcon1.right");
   var tableCreatorLink = document.createElement("A");
   linkList.appendChild(empty);
@@ -82,7 +119,7 @@
     table.style.minHeight = "1em";
     //table.style.border = "solid 2px #777";
     table.style.width = "auto";
-    table.style.padding = "0.5em";
+    table.style.padding = ".5em";
     table.style.margin = ".5em";
 
     var tableElements = [
@@ -149,7 +186,7 @@
         let tableRow = table.insertRow();
         for (let c = 0; c < colCount; c++) {
           let column = tableRow.appendChild(document.createElement("TD"));
-          addTextbox(r + "" + c, column);
+          new tableMember(`tb${r}${c}`, column);
         }
       }
     });
@@ -164,7 +201,7 @@
 
   function addTextbox(name, parent) {
     var tb = document.createElement("input");
-    tb.id = "tb" + name;
+    tb.id = id;
     parent.appendChild(tb);
   }
 })();
