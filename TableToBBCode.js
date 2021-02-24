@@ -310,11 +310,15 @@
       tableMembers = [];
     });
   }
-
-  function addTextbox(name, parent) {
+/**
+ * create an input field as well as a container and append the input to the container before appending the container to the given parent
+ * @param {string} id  
+ * @param {*} parent 
+ */
+  function addTextbox(id, parent) {
     var tb = document.createElement("input");
     let div = document.createElement("DIV");
-    tb.id = name;
+    tb.id = id;
     parent.appendChild(div);
     div.appendChild(tb);
   }
