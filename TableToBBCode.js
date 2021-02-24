@@ -3,7 +3,7 @@
 // @namespace    http://tampermonkey.net/
 // @version      0.1
 // @description  Create a Table without writing BBCode
-// @author       Jack
+// @author       Jack Langer
 // @match        http*://*.world-of-dungeons.*/wod/spiel/forum/viewtopic.*
 // @grant        none
 // ==/UserScript==
@@ -329,4 +329,9 @@
     div.appendChild(tb);
   }
 
+  function addDiv(parent){
+    var div = document.createElement("DIV");
+    parent.appendChild(div);
+    return div;
+  }
 })();
