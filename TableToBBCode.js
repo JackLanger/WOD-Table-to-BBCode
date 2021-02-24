@@ -3,7 +3,7 @@
 // @namespace    http://tampermonkey.net/
 // @version      0.1
 // @description  Create a Table without writing BBCode
-// @author       Jack
+// @author       Jack Langer
 // @match        http*://*.world-of-dungeons.*/wod/spiel/forum/viewtopic.*
 // @grant        none
 // ==/UserScript==
@@ -51,8 +51,6 @@
       this.div.style.background = "#888";
       this.div.style.border = "solid 2px";
       this.div.style.position = "absolute";
-      // this.div.style.top = "-1.5em";
-      // this.div.style.left = "10rem";
       this.div.style.zIndex = 3;
       this.div.id = id;
       this.div.style.cursor = "pointer";
@@ -165,13 +163,12 @@
   }
   var tableMembers = [];
   var linkList = document.querySelector(".boardcon1.right");
-  var tableCreatorLink = document.createElement("A");
+  var tableCreatorLink = createElement("A","Tabelle");
   
   linkList.appendChild(empty);
   linkList.appendChild(tableCreatorLink);
 
   tableCreatorLink.style.marginRight = "8px";
-  tableCreatorLink.innerText = "Tabelle";
   tableCreatorLink.style.color = "#FFCF00";
   tableCreatorLink.style.cursor = "pointer";
 
@@ -198,29 +195,22 @@
 
     const board = document.querySelector("textarea");
     const tableContainer = document.createElement("DIV");
-    const rows = document.createElement("input");
-    const columns = document.createElement("input");
-    const rowsLable = document.createElement("lable");
-    const columnsLable = document.createElement("lable");
-    const createTableButton = document.createElement("BUTTON");
-    const convertButton = document.createElement("BUTTON");
-    const deleteTableButton = document.createElement("BUTTON");
+    const rows = createElement("input","add row");
+    const columns = createElement("input","add column");
+    const rowsLable = createElement("lable","rows: ");
+    const columnsLable = createElement("lable","columns: ");
+    const createTableButton = createElement("BUTTON","Erstellen");
+    const convertButton = createElement("BUTTON","Convert");
+    const deleteTableButton = createElement("BUTTON","reset");
     const table = document.createElement("table");
 
     tableContainer.style.display = "none";
     tableContainer.style.margin = "0.5em";
-    rowsLable.innerText = "rows: ";
-    columnsLable.innerText = "columns: ";
 
     // setup the buttons
-    rows.innerHTML = "add Row";
-    columns.innerHTML = "add Column";
-    createTableButton.innerHTML = "Erstellen";
-    deleteTableButton.innerHTML = "reset";
     createTableButton.className = "button clickable";
     deleteTableButton.className = "button clickable";
     deleteTableButton.style.marginLeft = "0.5em";
-    convertButton.innerHTML = "Convert";
     convertButton.className = "button clickable";
     rows.id = "rows";
     columns.id = "columns";
@@ -320,13 +310,35 @@
       tableMembers = [];
     });
   }
-
-  function addTextbox(name, parent) {
+/**
+ * create an input field as well as a container and append the input to the container before appending the container to the given parent
+ * @param {string} id  
+ * @param {*} parent 
+ */
+  function addTextbox(id, parent) {
     var tb = document.createElement("input");
     let div = document.createElement("DIV");
-    tb.id = name;
+    tb.id = id;
     parent.appendChild(div);
     div.appendChild(tb);
   }
-
+  /**
+   * creates a new div element and appends it as child to a parent container
+   * @param {object} parent the container to act as a parent for a new div element
+   */
+  function addDiv(parent){
+    var div = document.createElement("DIV");
+    parent.appendChild(div);
+    return div;
+  }
+  /**
+   * Helper class for creating elements with content
+   * @param {string} elem describes the element to be created i.e "BUTTON"
+   * @param {string} content  content to be set as innerHTML
+   */
+  function createElement(elem,content){
+    var elem = document.createElement(elem);
+    elem.innerHTML = content;
+    return elem;
+  }
 })();
