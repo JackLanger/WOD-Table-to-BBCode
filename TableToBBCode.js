@@ -334,4 +334,9 @@
     parent.appendChild(div);
     return div;
   }
+  function createElement(elem,content){
+    var elem = document.createElement(elem);
+    elem.innerHTML = content;
+    return elem;
+  }
 })();
